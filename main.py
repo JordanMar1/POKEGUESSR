@@ -61,6 +61,12 @@ def clean_description(text, pokemon_name):
             cleaned_words.append(w)
     return " ".join(cleaned_words)
 
+def get_french_genera(species):
+    for genus in species["genera"]:
+        if genus["language"]["name"] == "fr":
+            return genus["genus"]
+    return "Catégorie inconnue"
+
 def get_french_description(species, pokemon_name):
     for entry in species["flavor_text_entries"]:
         if entry["language"]["name"] == "fr":
@@ -91,6 +97,7 @@ def get_random_pokemon():
         "description": get_french_description(species, get_french_name(species)),
         "shape": get_french_shape(species["shape"]["url"]),
         "abilities": get_french_abilities(pokemon["abilities"]),
+        "genera": get_french_genera(species),
         "cry": f"https://play.pokemonshowdown.com/audio/cries/{pokemon['name']}.mp3"
     }
 
@@ -115,27 +122,28 @@ def play():
             print(f"🚪 Tu fuis. C'était {poke['name']}")
             break
         if normalize(guess) in ["sound", "replay"]:
-            playsound(filename)
+            playsound("cry.mp3")
             attempts -= 1
             continue
         if normalize(guess) == normalize(poke["name"]):
             print(f"✅ Bien joué ! C'était {poke['name']} en {attempts} tentatives.")
             break
-        if attempts % 7 == 0:
-            print("👉 Type:", ", ".join(poke["types"]))
-        elif attempts % 7 == 1:
-            print("👉 Forme:", poke["shape"])
-        elif attempts % 7 == 2:
-            print("👉 Couleur:", poke["color"])
-        elif attempts % 7 == 3:
-            print("👉 Taux de capture:", poke["capture_rate"])
-        elif attempts % 7 == 4:
-            print("👉 Génération:", poke["generation"])
-        elif attempts % 7 == 5:
-            print("👉 Capacités:", ", ".join(poke["abilities"]))
-        elif attempts % 7 == 6:
+        if attempts % 8 == 0:
             print("👉 Description:", poke["description"])
-            
+        elif attempts % 8 == 1:
+            print("👉 Forme:", poke["shape"])
+        elif attempts % 8 == 2:
+            print("👉 Couleur:", poke["color"])
+        elif attempts % 8 == 3:
+            print("👉 Taux de capture:", poke["capture_rate"])
+        elif attempts % 8 == 4:
+            print("👉 Génération:", poke["generation"])
+        elif attempts % 8 == 5:
+            print("👉 Capacités:", ", ".join(poke["abilities"]))
+        elif attempts % 8 == 6:
+            print("👉 Type:", ", ".join(poke["types"]))
+        elif attempts % 8 == 7:
+            print("👉 Catégorie:", poke["genera"])
 
 if __name__ == "__main__":
     play()
