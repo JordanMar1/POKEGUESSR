@@ -1,7 +1,8 @@
 import requests
 import random
 import unicodedata
-from playsound import playsound
+import pygame
+import time
 
 
 def normalize(text):
@@ -107,10 +108,21 @@ def play_cry(url):
     r = requests.get(url)
     with open(filename, "wb") as f:
         f.write(r.content)
-    playsound(filename)
+    time.sleep(1)
+    pygame.mixer.init()
+    pygame.mixer.music.load(filename)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.1)
+
+def replay_cry():
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.1)
 
 #play to the game
 def play():
+    pygame.init()
     poke = get_random_pokemon()
     attempts = 0
     print("🎮 Devine le Pokémon !")
@@ -122,7 +134,7 @@ def play():
             print(f"🚪 Tu fuis. C'était {poke['name']}")
             break
         if normalize(guess) in ["sound", "replay"]:
-            playsound("cry.mp3")
+            replay_cry()
             attempts -= 1
             continue
         if normalize(guess) == normalize(poke["name"]):
@@ -144,6 +156,8 @@ def play():
             print("👉 Type:", ", ".join(poke["types"]))
         elif attempts % 8 == 7:
             print("👉 Catégorie:", poke["genera"])
+
+    pygame.quit()
 
 if __name__ == "__main__":
     play()
